@@ -1,8 +1,9 @@
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import { useForm } from 'react-hook-form';
+import { useRef, useState } from 'react';
 import { Button } from './ui/button';
 import { FaArrowUp } from 'react-icons/fa';
-import { useRef, useState } from 'react';
 
 type FormData = {
    prompt: string;
@@ -12,19 +13,24 @@ type ChatResponse = {
    message: string;
 };
 
+type Message = {
+   role: 'user' | 'bot';
+   content: string;
+};
+
 const ChatBot = () => {
-   const [messages, setMessages] = useState<string[]>([]);
+   const [messages, setMessages] = useState<Message[]>([]);
    const conversationId = useRef(crypto.randomUUID());
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
 
    const onSubmit = async ({ prompt }: FormData) => {
-      setMessages((prev) => [...prev, prompt]);
+      setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
       reset();
       const { data } = await axios.post<ChatResponse>('/api/chat', {
          prompt,
          conversationId: conversationId.current,
       });
-      setMessages((prev) => [...prev, data.message]);
+      setMessages((prev) => [...prev, { content: data.message, role: 'bot' }]);
    };
 
    const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -36,9 +42,18 @@ const ChatBot = () => {
 
    return (
       <div>
-         <div>
+         <div className="flex flex-col gap-3 mb-10">
             {messages.map((message, index) => (
-               <p key={index}>{message}</p>
+               <div
+                  key={index}
+                  className={`px-3 py-1 rounded-xl ${
+                     message.role === 'user'
+                        ? 'bg-blue-500 text-white self-end'
+                        : 'bg-gray-200 text-gray-800 self-start'
+                  }`}
+               >
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+               </div>
             ))}
          </div>
          <form
