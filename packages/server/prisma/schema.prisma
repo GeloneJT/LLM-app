@@ -18,7 +18,7 @@ model Product {
   description String?  @db.Text
   price       Float
   reviews     Review[]
-  summart     Summary?
+  summary     Summary?
 
   @@map("products")
 }
@@ -28,7 +28,7 @@ model Review {
   author    String   @db.VarChar(255)
   rating    Int      @db.TinyInt
   content   String   @db.Text
-  createAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
   productId Int
   product   Product  @relation(fields: [productId], references: [id])
 
