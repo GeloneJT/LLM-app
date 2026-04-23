@@ -19,6 +19,7 @@
    "dependencies": {
       "@prisma/adapter-mariadb": "^7.7.0",
       "@prisma/client": "^7.7.0",
+      "dayjs": "^1.11.20",
       "dotenv": "^17.4.2",
       "express": "^5.1.0",
       "openai": "^6.33.0",
