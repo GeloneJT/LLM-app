@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { type Review } from '../generated/prisma/client';
 import { reviewRepository } from '../repositories/review.repository';
 import { llmClient } from '../llm/client';
 
@@ -10,15 +9,11 @@ const template = fs.readFileSync(
 );
 
 export const reviewService = {
-   async getReviews(productId: number): Promise<Review[]> {
-      return reviewRepository.getReviews(productId);
-   },
-
    async summarizeReviews(productId: number): Promise<string> {
       const existingSummary =
          await reviewRepository.getReviewSummary(productId);
-      if (existingSummary && existingSummary.expiresAt > new Date()) {
-         return existingSummary.content;
+      if (existingSummary) {
+         return existingSummary;
       }
 
       const reviews = await reviewRepository.getReviews(productId, 10);
