@@ -12,9 +12,10 @@ export const reviewController = {
          return;
       }
 
-      const product = productRepository.getProduct(productId);
+      const product = await productRepository.getProduct(productId);
       if (!product) {
          res.status(404).json({ error: 'Product does not exist.' });
+         return;
       }
 
       const reviews = await reviewRepository.getReviews(productId);
